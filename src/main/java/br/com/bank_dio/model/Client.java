@@ -1,13 +1,17 @@
 package br.com.bank_dio.model;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Client {
     
     //atributos
-    @Getter
+
     private String name;
-    @Getter
     private String cpf;
 
 }
