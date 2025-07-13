@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.bank_dio.exception.InvalidTransaction;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +40,7 @@ public abstract class Account {
 
     }
 
-    public void depositValue (double value){
+    public void depositValue (double value) throws InvalidTransaction{
        if (value > 0){
             this.cashBalance += value;
 
@@ -47,16 +48,16 @@ public abstract class Account {
             registerTransaction(TransactionType.DEPOSIT, value);
 
             System.out.println(String.format("Valor to depósito: R$ %.2f", value));
-            System.out.println(String.format("Valor do balanço atual: R$", cashBalance));
+            System.out.println(String.format("Valor do balanço atual: R$ %.2f", cashBalance));
        } 
        else {
-            System.out.println("Impossível fazer depósito");
+            throw new InvalidTransaction("Valor deve ser positivo");
 
        }
 
     }
 
-    public void withdrawCash (double value){
+    public void withdrawCash (double value) throws InvalidTransaction{
         if (value > 0 && value <= cashBalance) {
             this.cashBalance -= value;
 
@@ -64,20 +65,34 @@ public abstract class Account {
             registerTransaction(TransactionType.WITHDRAW, value);
 
             System.out.println(String.format("Valor do saque: R$ %.2f", value));
-            System.out.println(String.format("Valor do balanço atual: R$", cashBalance));
+            System.out.println(String.format("Valor do balanço atual: R$ %.2f", cashBalance));
        } 
-       else {
-            System.out.println("Impossível sacar dinheiro");
+       else if (value <= 0) {
+            throw new InvalidTransaction("Valor do saque deve ser positivo");
 
+       }
+       else {
+            throw new InvalidTransaction("Saldo insuficiente para realizar o saque");
        }
         
 
     }
 
-    public void transferCash (Account destinationAccount, double value){
-        if (value > 0 && value <= cashBalance) {
-            this.cashBalance -= value;
-            destinationAccount.cashBalance += value; // deposito na outra conta
+    public void transferCash (Account destinationAccount, double value) throws InvalidTransaction{
+        
+        if (value <= 0) {
+            throw new InvalidTransaction("Valor da transferência deve ser positivo");
+        }
+        
+        if (value > cashBalance) {
+            throw new InvalidTransaction("Saldo insuficiente para realizar a transferência");
+        }
+        
+        if (destinationAccount == null) {
+            throw new InvalidTransaction("Conta de destino inválida");
+        }
+        this.cashBalance -= value;
+        destinationAccount.cashBalance += value; // deposito na outra conta
 
         this.registerTransaction(TransactionType.TRANSFER, value);
         destinationAccount.registerTransaction(TransactionType.TRANSFER_RECEIVED, value); 
@@ -85,11 +100,8 @@ public abstract class Account {
         
         System.out.println(String.format("Valor de transferência: R$ %.2f", value));
         System.out.println(String.format("Valor do balanço atual: R$ %.2f", cashBalance));
-       } 
-       else {
-            System.out.println("Impossível transferir dinheiro");
-
-       }
+        
+       
     
     }
     

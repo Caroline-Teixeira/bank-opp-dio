@@ -1,48 +1,56 @@
 package br.com.bank_dio.repository;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+
+import java.util.List;
+
 
 import br.com.bank_dio.model.Client;
 
 public class ClientRepository {
 
-    private HashMap<Long, Client> clients;
+    private List<Client> clients;
+
 
     public ClientRepository() {
-        this.clients = new HashMap<>();
+        this.clients = new ArrayList<>();
     }
 
     // métodos CRUD
-    public void addClient (long id, String name, String cpf) {
-        clients.put(id, new Client(name, cpf));
+    public boolean addClient (String name, String cpf) {
+            for (Client c : clients) {
+            if (c.getCpf().equals(cpf)) {
+                return false; // já existe
+            }
+    }
+        clients.add(new Client(name, cpf));
+        return true;
 
     }
 
-    public void findById (long id){
-        clients.get(id);
 
+   
+    public Client findByCpf(String cpf) {
+        for (Client c : clients) {
+            if (c.getCpf().equals(cpf)) {
+                return c;
+            }
     }
+    return null;
+}
 
-    public void findByCPF (String cpf) {
-        clients.values().stream()
-            .filter(client -> client.getCpf().equals(cpf))
-            .findFirst()
-            .orElse(null);
-
-    }
-
-    public void removeByCPF (String cpf){
-        clients.values().stream()
-            .filter(client -> client.getCpf().equals(cpf))
-            .findFirst()
-            .orElse(null);
-
-    }
-
+    public boolean removeByCPF(String cpf) {
+        return clients.removeIf(c -> c.getCpf().equals(cpf));
     
-/*public void addProduct (long code, String name, int quantity, double price){
-        productsInStorage.put(code, new Product(name, price, quantity));
-    } */
+}
 
+// Lista clientes - debugg
+    public void listClients() {
+        for (Client c : clients) {
+        System.out.println(c);
+        
+    }
+
+}
     
 }
