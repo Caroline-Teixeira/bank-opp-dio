@@ -123,7 +123,118 @@ public abstract class Account {
         }
     }
 
+    //  métodos de investimento 
 
+    // CDB - Certificado de Depósito Bancário (rendimento: 8% ao ano)
+    public void investimentCDB(double value) throws InvalidTransaction {
+    if (value <= 0) {
+        throw new InvalidTransaction("Valor do investimento deve ser positivo");
+    }
+    
+    if (value > cashBalance) {
+        throw new InvalidTransaction("Saldo insuficiente para realizar o investimento");
+    }
+    
+    
+    this.cashBalance -= value;
+    
+    // Calcula o rendimento (8% ao ano, simulando rendimento diário)
+    double bankReturn = value * 0.08 / 365; // Rendimento diário aproximado
+    
+    // Registra o investimento
+    registerInvestiment(InvestimentType.CDB, value, bankReturn);
+    
+    // Registra como transação
+    registerTransaction(TransactionType.INVESTMENT, value);
+    
+    System.out.println(String.format("Investimento CDB realizado: R$ %.2f", value));
+    System.out.println(String.format("Rendimento estimado (diário): R$ %.2f", bankReturn));
+    System.out.println(String.format("Saldo atual: R$ %.2f", cashBalance));
+}
+
+    // LCI - Letra de Crédito Imobiliário (rendimento: 6% ao ano)
+    public void investimentLCI(double value) throws InvalidTransaction {
+    if (value <= 0) {
+        throw new InvalidTransaction("Valor do investimento deve ser positivo");
+    }
+    
+    if (value > cashBalance) {
+        throw new InvalidTransaction("Saldo insuficiente para realizar o investimento");
+    }
+    
+    
+    this.cashBalance -= value;
+    
+    // Calcula o rendimento (6% ao ano, simulando rendimento diário)
+    double bankReturn = value * 0.06 / 365; // Rendimento diário aproximado
+    
+    // Registra o investimento
+    registerInvestiment(InvestimentType.LCI, value, bankReturn);
+    
+    // Registra como transação
+    registerTransaction(TransactionType.INVESTMENT, value);
+    
+    System.out.println(String.format("Investimento LCI realizado: R$ %.2f", value));
+    System.out.println(String.format("Rendimento estimado (diário): R$ %.2f", bankReturn));
+    System.out.println(String.format("Saldo atual: R$ %.2f", cashBalance));
+}
+
+    // Tesouro Direto (rendimento: 10% ao ano)
+    public void investimentTD(double value) throws InvalidTransaction {
+    if (value <= 0) {
+        throw new InvalidTransaction("Valor do investimento deve ser positivo");
+    }
+    
+    if (value > cashBalance) {
+        throw new InvalidTransaction("Saldo insuficiente para realizar o investimento");
+    }
+    
+    
+    this.cashBalance -= value;
+    
+    // Calcula o rendimento (10% ao ano, simulando rendimento diário)
+    double bankReturn = value * 0.10 / 365; // Rendimento diário aproximado
+    
+    // Registra o investimento
+    registerInvestiment(InvestimentType.TESOURO_DIRETO, value, bankReturn);
+    
+    // Registra como transação
+    registerTransaction(TransactionType.INVESTMENT, value);
+    
+    System.out.println(String.format("Investimento Tesouro Direto realizado: R$ %.2f", value));
+    System.out.println(String.format("Rendimento estimado (diário): R$ %.2f", bankReturn));
+    System.out.println(String.format("Saldo atual: R$ %.2f", cashBalance));
+}
+
+    // Fundo Imobiliário (rendimento: 12% ao ano)
+    public void investimentFI(double value) throws InvalidTransaction {
+        if (value <= 0) {
+            throw new InvalidTransaction("Valor do investimento deve ser positivo");
+    }
+    
+    if (value > cashBalance) {
+        throw new InvalidTransaction("Saldo insuficiente para realizar o investimento");
+    }
+    
+    // Deduz do saldo da conta
+    this.cashBalance -= value;
+    
+    // Calcula o rendimento (12% ao ano, simulando rendimento diário)
+    double bankReturn = value * 0.12 / 365; // Rendimento diário aproximado
+    
+    // Registra o investimento
+    registerInvestiment(InvestimentType.FUNDO_IMOBILIARIO, value, bankReturn);
+    
+    // Registra como transação
+    registerTransaction(TransactionType.INVESTMENT, value);
+    
+    System.out.println(String.format("Investimento Fundo Imobiliário realizado: R$ %.2f", value));
+    System.out.println(String.format("Rendimento estimado (diário): R$ %.2f", bankReturn));
+    System.out.println(String.format("Saldo atual: R$ %.2f", cashBalance));
+}
+
+
+    // histórico 
     public void showInvestimentHistory (){
         if (investiment.isEmpty()){
             System.out.println("Nenhum investimento foi realizado");

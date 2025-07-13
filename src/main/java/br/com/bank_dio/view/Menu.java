@@ -8,6 +8,7 @@ import br.com.bank_dio.model.CheckingAccount;
 import br.com.bank_dio.model.Client;
 import br.com.bank_dio.repository.AccountRepository;
 import br.com.bank_dio.repository.ClientRepository;
+import br.com.bank_dio.util.ConsolePrinter;
 import br.com.bank_dio.util.ValidationUtils;
 
 public class Menu {
@@ -15,13 +16,14 @@ public class Menu {
     private Scanner scanner = new Scanner(System.in);
     private ClientRepository clientRepository = new ClientRepository();
     private AccountRepository accountRepository = new AccountRepository();
+    private MenuInvestiment menuI = new MenuInvestiment();
 
     public void showMenu() {
         int option;
 
         do {
             System.out.println(" ");
-            System.out.println("===Bem-vindo ao Sistema Bancário DIO===");
+            ConsolePrinter.printInfo("===Bem-vindo ao Sistema Bancário DIO===");
             System.out.println("\n===== MENU =====");
             System.out.println("1 - Cadastrar cliente");
             System.out.println("2 - Criar conta");
@@ -30,14 +32,15 @@ public class Menu {
             System.out.println("5 - Transferir");
             System.out.println("6 - Ver saldo");
             System.out.println("7 - Ver extrato");
+            System.out.println("8 - Fazer investimento");
             System.out.println("9 - Sair");
-            System.out.print("Escolha um número de 1 a 9: ");
-            System.out.println(" ");
+            ConsolePrinter.printWarning("Escolha um número de 1 a 9: ");
+            
             
             try {
                 option = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Erro: Por favor, digite apenas números!");
+                ConsolePrinter.printError("Erro: Por favor, digite apenas números!");
                 option = 0; // valor que não seja 9 para continuar o loop
                 continue;
             }
@@ -50,11 +53,15 @@ public class Menu {
                 case 5 -> transfer();
                 case 6 -> showBalance();
                 case 7 -> showHistory();
-                case 9 -> System.out.println("Saindo do sistema...");
-                default -> System.out.println("Erro: Opção inválida. Por favor, escolha uma opção entre 1-7 ou 9.");
+                case 8 -> makeInvestment();
+                case 9 -> ConsolePrinter.printWarning("Saindo do Sistema...");
+                default -> ConsolePrinter.printError("Erro: Opção inválida. Por favor, escolha uma opção entre 1-9"); 
+                
             }
         } while (option != 9);
     }
+
+    
 
     private void addClient() {
         try {
@@ -67,12 +74,13 @@ public class Menu {
             String validatedCPF = ValidationUtils.validateAndFormatCPF(cpf);
 
             if (clientRepository.addClient(name.trim(), validatedCPF)) {
-                System.out.println("Cliente cadastrado com sucesso!");
+                ConsolePrinter.printSuccess("Cliente cadastrado com sucesso!");
             } else {
                 throw new DuplicateClient(validatedCPF);
             }
         } catch (BankException e) {
-            System.out.println("Erro: " + e.getMessage());
+            ConsolePrinter.printError("Erro: " + e.getMessage());
+            
         }
     }
 
@@ -91,9 +99,9 @@ public class Menu {
             account.setClient(client);
 
             int numero = accountRepository.addAccount(account);
-            System.out.println("Conta corrente criada com sucesso! Número: " + numero);
+            ConsolePrinter.printSuccess("Conta corrente criada com sucesso! Número: " + numero);
         } catch (BankException e) {
-            System.out.println("Erro: " + e.getMessage());
+            ConsolePrinter.printError("Erro: " + e.getMessage());
         }
     }
 
@@ -111,9 +119,10 @@ public class Menu {
             }
 
             account.depositValue(cashValue);
-            System.out.println("Depósito realizado com sucesso!");
+            ConsolePrinter.printSuccess("Depósito realizado com sucesso!");
+            
         } catch (BankException e) {
-            System.out.println("Erro: " + e.getMessage());
+            ConsolePrinter.printError("Erro: " + e.getMessage());
         }
     }
 
@@ -131,11 +140,12 @@ public class Menu {
             }
 
             account.withdrawCash(cashValue);
-            System.out.println("✓ Saque realizado com sucesso!");
+            ConsolePrinter.printSuccess("Saque realizado com sucesso!");
         } catch (BankException e) {
-            System.out.println("Erro: " + e.getMessage());
+            ConsolePrinter.printError("Erro: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Erro: Saldo insuficiente para realizar o saque.");
+            ConsolePrinter.printError("Erro: Saldo insuficiente para realizar o saque.");
+           
         }
     }
 
@@ -164,11 +174,13 @@ public class Menu {
             }
 
             userAccount.transferCash(destinyAccount, cashValue);
-            System.out.println("✓ Transferência realizada com sucesso!");
+            ConsolePrinter.printSuccess("Transferência (Pix) realizada com sucesso!");
+    
         } catch (BankException e) {
-            System.out.println("Erro: " + e.getMessage());
+            ConsolePrinter.printError("Erro: " + e.getMessage());
+            
         } catch (Exception e) {
-            System.out.println("Erro: Saldo insuficiente para realizar a transferência.");
+            ConsolePrinter.printError("Erro: Saldo insuficiente para realizar a transferência (Pix).");
         }
     }
 
@@ -184,7 +196,7 @@ public class Menu {
 
             account.showCash();
         } catch (BankException e) {
-            System.out.println("Erro: " + e.getMessage());
+            ConsolePrinter.printError("Erro: " + e.getMessage());
         }
     }
 
@@ -200,7 +212,27 @@ public class Menu {
 
             account.showTransactionHistory();
         } catch (BankException e) {
-            System.out.println("Erro: " + e.getMessage());
+            ConsolePrinter.printError("Erro: " + e.getMessage());
         }
     }
+
+    private void makeInvestment() {
+    try {
+        System.out.print("Número da conta: ");
+        int accountNumber = ValidationUtils.validateAccountNumber(scanner.nextLine());
+        
+        var account = accountRepository.findByNumber(accountNumber);
+        if (account == null) {
+            throw new AccountNotFound(String.valueOf(accountNumber));
+        }
+        
+        // Passa a conta encontrada para o menu de investimentos
+        menuI.showMenuInvestiments(account);
+        
+    } catch (BankException e) {
+        ConsolePrinter.printError("Erro: " + e.getMessage());
+    }
+}
+
+
 }

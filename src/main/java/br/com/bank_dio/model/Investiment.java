@@ -18,7 +18,7 @@ public class Investiment {
 
     @Override
     public String toString() {
-    return String.format("%s — Valor Investido: R$ %.2f | Rendimento: R$ %.2f",
+    return String.format("| %s -- Valor Investido: R$ %.2f | Rendimento: R$ %.2f",
             investimentType.getDescriptionType(), investedValue, bankReturn);
 }
 
