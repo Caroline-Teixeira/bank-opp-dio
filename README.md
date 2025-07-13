@@ -5,7 +5,7 @@
 ![Maven](https://img.shields.io/badge/Maven-Build%20Tool-important?style=for-the-badge&logo=apachemaven)
 ![Console App](https://img.shields.io/badge/Console-Java%2021-blueviolet?style=for-the-badge)
 
-<a href="https://github.com/Caroline-Teixeira/sudoku_game/blob/main/README_ENG.md"><img src="https://raw.githubusercontent.com/yammadev/flag-icons/refs/heads/master/png/US%402x.png" alt="Inglês" ></a>
+<a href="https://github.com/Caroline-Teixeira/bank-opp-dio/blob/main/README_ENG.md"><img src="https://raw.githubusercontent.com/yammadev/flag-icons/refs/heads/master/png/US%402x.png" alt="Inglês" ></a>
 
 ## 📖 Descrição
 
